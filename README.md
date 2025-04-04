@@ -80,6 +80,16 @@ JSON-LD credentials can leverage context URLs to select appropriate PDF template
    - Maps credential data to template placeholders
    - Generates final PDF with combined template design and credential data
 
+#### 4.2.3 Verifiable Presentation Rendering
+
+Verifiable Presentations (VPs) often include multiple Verifiable Credentials (VCs) bundled under a single cryptographic proof. To balance cryptographic integrity with human readability, this specification recommends a **multi-page rendering format** with unified visual and verification elements.
+
+- **Summary Page (First Page)**  
+  A summary page lists all included credentials, displays the VP identifier, and includes a single verification mechanism (e.g., QR code or digital seal) that validates the entire presentation.
+
+- **Credential Pages (Subsequent Pages)**  
+  Each VC is rendered on its own page using a credential-specific template, preserving its unique visual identity and structure. Pages include consistent headers/footers with the VP identifier and pagination (e.g., “VP-12345 · Page 2 of 5”).
+
 ### 4.3 Machine-Readable Embedding
 
 The PDF shall embed the original VC/VP data in three ways for maximum compatibility:
