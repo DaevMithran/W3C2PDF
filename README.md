@@ -44,7 +44,6 @@ The adoption of W3C Verifiable Credentials (VCs) and Verifiable Presentations (V
 6. The layout and design of the PDF should be dynamically determined based on credential format:
    - JSON-LD: Using context for dynamic UI generation
    - JWT: Using standardized templates
-7. The signature mechanism should allow migration to DID-based signing
 
 ## 4. Technical Specification
 
@@ -80,9 +79,7 @@ The rendering approach differs based on credential format:
    - QR Code containing a verification URL, DID, or cryptographic hash
    - Machine-readable proof information
    - Visual verification instructions
-6. Digitally sign the PDF using one or both:
-   - QES for legal assurance (if required)
-   - DID-based cryptographic signatures
+6. Preserve the original cryptographic proof from the VC/VP in the PDF metadata
 
 ### 4.2 Human-Readable Representation
 
@@ -163,25 +160,20 @@ The PDF shall embed the original VC/VP data in three ways for maximum compatibil
    - A verification URL
    - A cryptographic hash linking to the credential
 
-### 4.4 Digital Signatures
+### 4.4 Cryptographic Proof Preservation
 
-The PDF MUST be digitally signed to ensure integrity and authenticity. The specification supports multiple signature methods:
+The PDF must preserve the original cryptographic proofs from the VC/VP:
 
-1. **Standard Digital Signatures**
-   - Standard PDF digital signatures using widely supported algorithms
-   - Suitable for many general use cases
+1. **Original Proof Preservation**
+   - For JWT: The complete token must be preserved intact within PDF metadata
+   - For JSON-LD: The proof section must be preserved in its entirety
+   - The original signature must remain verifiable after extraction from the PDF
 
-2. **QES** (Qualified Electronic Signature)
-   - Standard PDF digital signature compliant with eIDAS requirements
-   - Uses X.509 certificates from qualified trust service providers
-   - Appropriate for use cases requiring high legal assurance in regulated contexts
+2. **Additional Security Layers** (Implementation Choice)
+   - Standard PDF digital signatures may be added as an additional layer if required
+   - QES (Qualified Electronic Signature) for regulatory contexts requiring additional assurance
 
-3. **DID-based Signatures**
-   - Signatures using verification methods associated with DIDs
-   - Enables decentralized verification within self-sovereign identity ecosystems
-   - Can coexist with other signature types for both legal and decentralized verification
-
-Implementations should select signature methods appropriate to their use cases and regulatory requirements.
+Implementations should prioritize preserving the integrity of the original credential proof. Additional security layers should not interfere with or invalidate the original proof verification.
 
 ### 4.5 PDF to Credential Conversion
 
@@ -199,11 +191,6 @@ Upon extraction:
 
 1. The credential shall be verified against its cryptographic proof
 2. The PDF signature shall be verified (QES and/or DID-based)
-3. Credential status shall be checked via:
-   - Standard revocation lists
-   - Status lists credential
-   - Merkle proofs
-   - Zero-knowledge proofs for privacy-preserving revocation
 4. The extraction process shall confirm data integrity between visual and machine-readable components
 
 #### 4.5.3 Verification Status
@@ -281,13 +268,7 @@ Conforming implementations MUST:
 - Support at least one of:
   - JSON-LD credentials with context-based dynamic rendering
   - JWT credentials with standardized template rendering
-
-Implementations should select features appropriate to their use cases:
-
-- Signature methods (standard, QES, DID-based) based on regulatory and trust requirements
-- PDF/A-3 for long-term archival needs
-- Privacy-preserving features for selective disclosure
-- Additional credential formats beyond JWT and JSON-LD as needed
+- Additional security measures (PDF signatures, QES) based on regulatory requirements- PDF/A-3 for long-term archival needs
 
 ### 5.3 Security Considerations
 
