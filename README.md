@@ -12,13 +12,10 @@ The adoption of W3C Verifiable Credentials (VCs) and Verifiable Presentations (V
 ### 1.2 Scope & Assumptions
 
 - Supports bidirectional conversion between credentials and PDFs (VC/VP ↔ PDF)
-- Supports both JSON-LD and JWT-based VCs & VPs for maximum interoperability
+- Supports both W3C compliant JSON-LD and JWT-based VCs & VPs
 - The PDF contains both human-readable and machine-readable representations of the credential
-- Supports all parties in the VC ecosystem: issuers, holders, and verifiers
 - Compatible with various standards including PDF/A archival standards
 - The UI of the PDF can be dynamically determined based on the JSON-LD context, allowing customized rendering per credential type
-- JWT-based credentials follow standardized templates for consistent visual representation
-- Supports various signature methods including standard digital signatures, QES for regulatory contexts, and DID-based approaches
 - Allows verification of PDF credentials without requiring specialized wallet software
 
 ## 2. Terminology
@@ -38,10 +35,9 @@ The adoption of W3C Verifiable Credentials (VCs) and Verifiable Presentations (V
 
 1. The PDF must contain a human-readable representation of the VC/VP
 2. The VC data should be embedded inside the PDF metadata (XMP) or as an attachment (PDF/A-3)
-3. The PDF must be digitally signed using QES for legal recognition when required
-4. The PDF should support easy verification via QR codes, data URLs, or embedded proofs
-5. The system must ensure data integrity, revocation handling, and interoperability with existing verification tools
-6. The layout and design of the PDF should be dynamically determined based on credential format:
+3. The PDF should support easy verification via QR codes, data URLs, or embedded proofs
+4. The system must ensure data integrity, revocation handling, and interoperability with existing verification tools
+5. The layout and design of the PDF should be dynamically determined based on credential format:
    - JSON-LD: Using context for dynamic UI generation
    - JWT: Using standardized templates
 
@@ -74,11 +70,9 @@ The rendering approach differs based on credential format:
 4. Embed machine-readable VC/VP data:
    - Primary: Inside PDF XMP metadata
    - Secondary: As an attachment (for PDF/A-3 compliance)
-   - Optional: As an invisible text layer for redundancy
 5. Include verification components:
    - QR Code containing a verification URL, DID, or cryptographic hash
    - Machine-readable proof information
-   - Visual verification instructions
 6. Preserve the original cryptographic proof from the VC/VP in the PDF metadata
 
 ### 4.2 Human-Readable Representation
@@ -204,18 +198,6 @@ Verification shall result in one of these statuses:
 - REVOKED: Credential has been revoked
 - ERROR: Verification process couldn't complete
 
-### 4.6 Selective Disclosure Handling
-
-When converting a VP with selective disclosure to PDF:
-
-1. Only the disclosed attributes shall appear in the human-readable representation
-2. The selective disclosure proofs shall be preserved in the embedded VP
-3. The PDF shall indicate that it represents a partial disclosure of the credential
-4. When extracting a VP from a PDF, the selective disclosure properties shall remain intact
-5. For ZKP-based selective disclosure (e.g., BBS+ signatures):
-   - The derived proof shall be preserved
-   - The conversion process shall not compromise zero-knowledge properties
-
 ## 5. Implementation Guidelines
 
 ### 5.1 Context Extension for Display
@@ -264,11 +246,6 @@ Conforming implementations MUST:
 - Preserve all cryptographically relevant material
 - Maintain a one-to-one mapping between visible and embedded data
 - Provide clear error handling for conversion failures
-- Implement at least one digital signature method for PDF integrity
-- Support at least one of:
-  - JSON-LD credentials with context-based dynamic rendering
-  - JWT credentials with standardized template rendering
-- Additional security measures (PDF signatures, QES) based on regulatory requirements- PDF/A-3 for long-term archival needs
 
 ### 5.3 Security Considerations
 
@@ -280,13 +257,6 @@ This specification acknowledges these potential attack vectors:
 - Attacks on the conversion process itself
 
 Implementations must provide protections against these attacks.
-
-### 5.4 Privacy Considerations
-
-- Implementers shall ensure no additional PII is leaked during conversion
-- Metadata shall be protected against unintentional exposure
-- Selective disclosure properties shall be preserved
-- PDF properties shall be sanitized to remove identifying information not present in the original VC
 
 ## 6. Implementation Examples
 
@@ -375,21 +345,7 @@ The specification ensures compatibility with:
 - Accessibility standards (PDF/UA) for universal access
 - Common wallet implementations for credential import/export
 
-## 8. Future Considerations
-
-This specification acknowledges these areas for future development:
-
-- Advanced rendering capabilities for complex credential types
-- Enhanced selective disclosure mechanisms
-- Integration with emerging trust frameworks
-- Support for credential schemas and validation
-- Credential chaining and derived credentials
-- Long-term archival considerations
-- Internationalization and localization support
-- Accessibility enhancements
-- Backup and recovery mechanisms
-
-## 9. Conclusion
+## 8. Conclusion
 
 This specification bridges the gap between self-sovereign identity and traditional document-based workflows through bidirectional conversion between verifiable credentials and PDF documents. By enabling both credential-to-PDF and PDF-to-credential transformations, it makes verifiable credentials more accessible and easy to verify without requiring specialized wallet software.
 
