@@ -290,46 +290,7 @@ Implementations must provide protections against these attacks.
 
 ## 6. Implementation Examples
 
-### 6.1 Sample JSON-LD VC
-
-```json
-{
-  "@context": [
-    "https://www.w3.org/2018/credentials/v1",
-    "https://w3id.org/vc-display/v1"
-  ],
-  "type": ["VerifiableCredential", "DiplomaCredential"],
-  "issuer": "did:example:123",
-  "credentialSubject": {
-    "id": "did:example:456",
-    "degree": {
-      "type": "Bachelor of Science",
-      "name": "Computer Science"
-    }
-  },
-  "display:layout": {
-    "template": "certificate"
-  },
-  "display:branding": {
-    "logo": "data:image/png;base64,..."
-  },
-  "proof": {
-    "type": "Ed25519Signature2018",
-    "created": "2025-04-01T12:00:00Z",
-    "proofPurpose": "assertionMethod",
-    "verificationMethod": "did:example:123#keys-1",
-    "jws": "eyJhbGciOiJFZERTQSJ9..."
-  }
-}
-```
-
-### 6.2 Sample JWT VC
-
-```
-eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkaWQ6ZXhhbXBsZToxMjMiLCJzdWIiOiJkaWQ6ZXhhbXBsZTo0NTYiLCJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIiwiRGlwbG9tYUNyZWRlbnRpYWwiXSwiY3JlZGVudGlhbFN1YmplY3QiOnsiZGVncmVlIjp7InR5cGUiOiJCYWNoZWxvciBvZiBTY2llbmNlIiwibmFtZSI6IkNvbXB1dGVyIFNjaWVuY2UifX19LCJpYXQiOjE1ODMyNTc5MzMsImV4cCI6MTcwMjI0Mjk5Mn0.HGU1y0QqP_JFMBJPrPECXXuUlwA8NJG5X4FR9jR3V4CzjK3xQS5viaQi_HLxNBKl7DwPbDrdiAyPKEZAqHl9RA
-```
-
-### 6.3 Node.js Implementation Example
+### 6.1 Node.js Implementation Example
 
 ```javascript
 async function generatePDF(credential, format) {
@@ -360,7 +321,7 @@ async function generateQRCode(credential) {
 }
 ```
 
-### 6.4 Verification Example
+### 6.2 Verification Example
 
 ```javascript
 async function verifyPDFCredential(pdfBuffer) {
