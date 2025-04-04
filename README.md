@@ -1,5 +1,8 @@
 # W3C2PDF: A Specification for Bidirectional VC-PDF Conversion
 
+**Authors**:  
+- [Daev Mithran](https://github.com/DaevMithran)
+    
 ## 1. Introduction
 
 ### 1.1 Motivation
