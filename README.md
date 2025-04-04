@@ -5,62 +5,33 @@
     
 ## 1. Introduction
 
-### 1.1 Motivation
-
-The adoption of W3C Verifiable Credentials (VCs) and Verifiable Presentations (VPs) is increasing, but human-readable formats remain a barrier to accessibility. Many institutions and regulatory bodies require credentials in traditional document formats, such as PDF, for verification and archival purposes. This specification outlines bidirectional conversion methods between VCs/VPs and PDF - allowing both conversion from credentials to PDF documents and from PDF documents back to verifiable credentials, while preserving cryptographic verifiability and privacy characteristics in both directions.
-
-### 1.2 Scope & Assumptions
-
-- Supports bidirectional conversion between credentials and PDFs (VC/VP ↔ PDF)
-- Supports both W3C compliant JSON-LD and JWT-based VCs & VPs
-- The PDF contains both human-readable and machine-readable representations of the credential
-- Compatible with various standards including PDF/A archival standards
-- The UI of the PDF can be dynamically determined based on the JSON-LD context, allowing customized rendering per credential type
-- Allows verification of PDF credentials without requiring specialized wallet software
+The adoption of W3C Verifiable Credentials (VCs) and Verifiable Presentations (VPs) is increasing, but human-readable formats require
+specialized digital wallets for storage and verification. Many institutions and regulatory bodies require credentials in traditional document formats, such as PDF, for verification and archival purposes. This specification outlines bidirectional conversion methods between VCs/VPs and PDF, allowing both conversion from credentials to PDF documents and from PDF documents back to verifiable credentials, while preserving cryptographic verifiability and privacy characteristics in both directions.
 
 ## 2. Terminology
 
 - **Verifiable Credential (VC)**: A cryptographically secure credential conforming to the W3C Verifiable Credentials Data Model.
 - **Verifiable Presentation (VP)**: A privacy-preserving presentation derived from one or more Verifiable Credentials.
-- **PDF Document**: A Portable Document Format file conforming to ISO 32000-2:2020.
-- **Conversion**: The process of transforming a VC/VP to a PDF document or vice versa.
 - **Proof**: Cryptographic material used to verify the authenticity and integrity of a credential.
-- **Selective Disclosure**: The ability to reveal only a subset of credential attributes.
 - **QES**: Qualified Electronic Signature, as defined in eIDAS regulation.
 - **DID**: Decentralized Identifier, a W3C standard for verifiable, decentralized digital identity.
 
 ## 3. Key Requirements
 
-### 3.1 Bidirectional Conversion Requirements
-
 1. The PDF must contain a human-readable representation of the VC/VP
-2. The VC data should be embedded inside the PDF metadata (XMP) or as an attachment (PDF/A-3)
+2. The VC data should be embedded inside the PDF metadata (XMP) or as an attachment (PDF/A-3) for machine readability
 3. The PDF should support easy verification via QR codes, data URLs, or embedded proofs
 4. The system must ensure data integrity, revocation handling, and interoperability with existing verification tools
 5. The layout and design of the PDF should be dynamically determined based on credential format:
    - JSON-LD: Using context for dynamic UI generation
    - JWT: Using standardized templates
+6. Allows verification of PDF credentials without requiring specialized wallet software
 
 ## 4. Technical Specification
 
 This specification defines both conversion directions - from credentials to PDF and from PDF back to verifiable credentials.
 
 ### 4.1 Credential to PDF Conversion
-
-#### 4.1.1 General Structure
-
-A PDF document derived from a VC/VP shall contain:
-
-1. A human-readable representation of the credential data
-2. Machine-readable metadata embedded in the PDF
-3. Cryptographic proof information
-4. Visual security elements
-
-The rendering approach differs based on credential format:
-- JSON-LD credentials shall use their context definitions to dynamically determine rendering
-- JWT credentials shall follow a standardized template approach
-
-#### 4.1.2 Generation Process
 
 1. Extract VC/VP data from JSON-LD or JWT format
 2. Determine the PDF layout:
@@ -77,50 +48,37 @@ The rendering approach differs based on credential format:
 
 ### 4.2 Human-Readable Representation
 
-#### 4.2.1 JSON-LD Dynamic Rendering
+#### 4.2.1 Default Rendering Approach
 
-For JSON-LD credentials, the PDF rendering shall be determined dynamically using:
-
-- The `@context` definitions to interpret semantic meaning of properties
-- Type definitions to determine appropriate visual layouts
-- Schema.org or other vocabulary mappings to guide display formatting
-- Optional display mapping extensions in the context
-
-The context may contain rendering hints such as:
-```json
-{
-  "@context": {
-    "@version": 1.1,
-    "ex": "https://example.org/",
-    "name": "ex:name",
-    "display": {
-      "@id": "ex:display",
-      "@context": {
-        "order": "ex:displayOrder",
-        "section": "ex:displaySection",
-        "format": "ex:displayFormat"
-      }
-    },
-    "name": {
-      "@id": "ex:name",
-      "display": {
-        "order": 1,
-        "section": "header",
-        "format": "heading"
-      }
-    }
-  }
-}
-```
-
-#### 4.2.2 JWT Standardized Rendering
-
-For JWT credentials, the PDF shall present credential data in a structured, standardized format:
+By default, both JWT and JSON-LD credentials will use standardized PDF rendering templates:
 
 - Credential subject attributes shall be presented in a clear, organized layout
 - Issuer information shall be prominently displayed
 - Issuance and expiration dates shall be clearly indicated
 - Credential type shall be identified
+- Critical attributes must be visually emphasized
+- Credential status must be clearly indicated if present
+
+These default templates ensure consistent presentation across different types of credentials when no custom rendering is specified.
+
+#### 4.2.2 JSON-LD Context-Driven Rendering (Optional)
+
+JSON-LD credentials can leverage context URLs to select appropriate PDF templates:
+
+1. **PDF Templates**
+   - Real PDF files with professionally designed layouts and designated data placeholders
+   - Hosted in the implementation's template library
+
+2. **Context-Based Template Selection**
+   - Implementation maps context URLs to specific template files
+   - Example mapping: `"https://schema.org/ui-certificate" → certificate-template.pdf`
+   - No additional properties needed in credential beyond standard context URLs
+
+3. **Process**
+   - System recognizes context URL in credential's `@context` array
+   - Loads corresponding PDF template file
+   - Maps credential data to template placeholders
+   - Generates final PDF with combined template design and credential data
 
 ### 4.3 Machine-Readable Embedding
 
@@ -200,46 +158,7 @@ Verification shall result in one of these statuses:
 
 ## 5. Implementation Guidelines
 
-### 5.1 Context Extension for Display
-
-This specification defines a display extension for JSON-LD contexts:
-
-```json
-{
-  "@context": {
-    "display": "https://w3id.org/vc-display/v1",
-    "display:layout": {
-      "@id": "https://w3id.org/vc-display/v1#layout",
-      "@context": {
-        "template": "https://w3id.org/vc-display/v1#template",
-        "card": "https://w3id.org/vc-display/v1#card",
-        "certificate": "https://w3id.org/vc-display/v1#certificate"
-      }
-    },
-    "display:property": {
-      "@id": "https://w3id.org/vc-display/v1#property",
-      "@context": {
-        "order": "https://w3id.org/vc-display/v1#order",
-        "section": "https://w3id.org/vc-display/v1#section",
-        "emphasize": "https://w3id.org/vc-display/v1#emphasize",
-        "label": "https://w3id.org/vc-display/v1#label",
-        "value": "https://w3id.org/vc-display/v1#value"
-      }
-    },
-    "display:branding": {
-      "@id": "https://w3id.org/vc-display/v1#branding",
-      "@context": {
-        "logo": "https://w3id.org/vc-display/v1#logo",
-        "background": "https://w3id.org/vc-display/v1#background",
-        "primaryColor": "https://w3id.org/vc-display/v1#primaryColor",
-        "secondaryColor": "https://w3id.org/vc-display/v1#secondaryColor"
-      }
-    }
-  }
-}
-```
-
-### 7.2 Implementation Requirements
+### 5.1 Implementation Requirements
 
 Conforming implementations MUST:
 
@@ -247,7 +166,7 @@ Conforming implementations MUST:
 - Maintain a one-to-one mapping between visible and embedded data
 - Provide clear error handling for conversion failures
 
-### 5.3 Security Considerations
+### 5.2 Security Considerations
 
 This specification acknowledges these potential attack vectors:
 
@@ -312,16 +231,7 @@ async function verifyPDFCredential(pdfBuffer) {
     const isDataIntegrityValid = await verifyDataIntegrity(pdfBuffer, credential);
     
     // Determine overall verification status
-    let status = 'ERROR';
-    if (isCredentialValid && isPDFSignatureValid && isActive && isDataIntegrityValid) {
-      status = 'VERIFIED';
-    } else if (!isCredentialValid) {
-      status = 'INVALID';
-    } else if (!isPDFSignatureValid || !isDataIntegrityValid) {
-      status = 'TAMPERED';
-    } else if (!isActive) {
-      status = 'REVOKED';
-    }
+    ...
     
     return {
       status,
@@ -330,8 +240,6 @@ async function verifyPDFCredential(pdfBuffer) {
       }
     };
 }
-
-// Functions for extraction, verification, etc.
 ```
 
 ## 7. Interoperability & Compliance
