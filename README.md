@@ -31,6 +31,8 @@ specialized digital wallets for storage and verification. Many institutions and 
 
 This specification defines both conversion directions - from credentials to PDF and from PDF back to verifiable credentials.
 
+![Workflow](https://raw.githubusercontent.com/DaevMithran/W3C2PDF/refs/heads/main/workflow.svg)
+
 ### 4.1 Credential to PDF Conversion
 
 1. Extract VC/VP data from JSON-LD or JWT format
@@ -273,3 +275,6 @@ The bidirectional nature of this specification serves dual purposes:
 2. **PDF to Credential**: Enables verification of these documents through conversion back to verifiable credentials, preserving the cryptographic security model
 
 The specification supports a range of implementation approaches - from basic credential exchange scenarios to highly regulated environments requiring qualified signatures and compliance with specific trust frameworks. By supporting both JSON-LD and JWT formats with appropriate rendering approaches, it maximizes interoperability across the VC ecosystem while allowing implementations to select features appropriate to their specific requirements.
+
+## 💖 Support This Project
+Like this project? [Donate via PayPal](https://paypal.me/DaevMithran) and support continued improvements.
